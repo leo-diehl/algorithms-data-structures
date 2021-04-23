@@ -1,4 +1,4 @@
-module.exports.assert = (testResult, description) => {
+module.exports.assert = function (testResult, description = '') {
   if (!testResult) {
     throw new Error(description)
   }
