@@ -1,5 +1,5 @@
 const ExtendedSet = require('./extendedSet')
-const { assert } = require('../testHelper')
+const { assert } = require('../../testHelper')
 
 const testSuites = {
   union: [
