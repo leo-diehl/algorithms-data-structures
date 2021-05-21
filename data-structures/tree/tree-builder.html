@@ -1,0 +1,138 @@
+<html>
+  <head>
+    <style>
+      body {
+        background-color: #1d2126;
+      }
+      .wrapper {
+        display: flex;
+      }
+      .node {
+        border-radius: 50%;
+        width: 100%;
+        height: 100%;
+        max-width: 50px;
+        max-height: 50px;
+        background-color: #eee;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 0 0 4px #1d2126;
+        z-index: 2;
+        transition: border 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+      }
+      .node input {
+        width: 100%;
+        background: transparent;
+        border: none;
+        text-align: center;
+      }
+      .node input:focus {
+        outline: none;
+      }
+      .node-container {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        height: 120px;
+        min-width: 50px;
+      }
+      .children-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+        grid-gap: 8px;
+      }
+      .node-wrapper {
+        position: relative;
+        padding: 8px;
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        border-radius: 6px;
+        height: max-content;
+      }
+      .node-container:hover .add-button,
+      .node-container:hover .remove-button,
+      .node-container:hover .add-sibling-button {
+        opacity: 0.6;
+      }
+      .add-button,
+      .remove-button {
+        position: absolute;
+        border: none;
+        border-radius: 3px;
+        height: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 10px;
+      }
+      .add-button,
+      .remove-button,
+      .add-sibling-button {
+        font-size: 18px;
+        cursor: pointer;
+        opacity: 0;
+        transition: opacity 0.2s ease-out;
+        font-weight: 600;
+        color: white;
+      }
+      .add-sibling-button {
+        position: absolute;
+        right: 3px;
+        height: 106px;
+        margin: 4px;
+        border-radius: 0 4px 4px 0;
+        border: none;
+        background: rgba(77, 133, 189, 0.7);
+      }
+      .add-button > div,
+      .remove-button > div {
+        margin-top: -2px;
+        margin-right: -1px;
+      }
+      .add-button:hover,
+      .remove-button:hover,
+      .add-sibling-button:hover {
+        opacity: 1 !important;
+      }
+      .add-button {
+        background: rgba(96, 189, 77, 0.7);
+        display: flex;
+        align-items: flex-end;
+        width: 50px;
+        height: 40px;
+        bottom: 3px;
+      }
+      .remove-button {
+        background: rgba(189, 77, 77, 0.7);
+        z-index: 3;
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+      }
+      .mock {
+        display: none;
+        opacity: 0.3;
+      }
+      .children-container.mock-visible > div.mock {
+        display: block;
+      }
+      .hidden {
+        display: none;
+      }
+      .lighten {
+        border: 10px solid rgb(0, 255, 170);
+      }
+    </style>
+    <script src="./tree-builder.js" type="module" defer></script>
+  </head>
+  <body>
+    <div class="interaction-container">
+      <button id="inorder-btn">Inorder</button>
+      <button id="preorder-btn">Preorder</button>
+      <button id="postorder-btn">Postorder</button>
+    </div>
+    <div id="tree-container"></div>
+  </body>
+</html>
