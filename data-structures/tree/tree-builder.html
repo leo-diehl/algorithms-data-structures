@@ -38,18 +38,23 @@
 
         height: 120px;
         min-width: 50px;
+        margin-bottom: 8px;
       }
       .children-container {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
         grid-gap: 8px;
       }
+      .children-container .node-wrapper {
+        margin-bottom: 8px;
+      }
       .node-wrapper {
         position: relative;
-        padding: 8px;
+        padding: 8px 8px 0 8px;
         border: 2px solid rgba(255, 255, 255, 0.2);
         border-radius: 6px;
         height: max-content;
+        transition: opacity 0.3s ease-in-out;
       }
       .node-container:hover .add-button,
       .node-container:hover .remove-button,
@@ -124,14 +129,30 @@
       .lighten {
         border: 10px solid rgb(0, 255, 170);
       }
+      .interaction-container {
+        padding: 0px 16px 20px;
+        color: white;
+        display: flex;
+        gap: 40px;
+      }
+      .darkened {
+        opacity: 0.3;
+      }
     </style>
     <script src="./tree-builder.js" type="module" defer></script>
   </head>
   <body>
     <div class="interaction-container">
-      <button id="inorder-btn">Inorder</button>
-      <button id="preorder-btn">Preorder</button>
-      <button id="postorder-btn">Postorder</button>
+      <div>
+        <h3>Breadth First Search</h3>
+        <button id="breadth-btn">Breadth</button>
+      </div>
+      <div>
+        <h3>Depth First Search</h3>
+        <button id="inorder-btn">Inorder</button>
+        <button id="preorder-btn">Preorder</button>
+        <button id="postorder-btn">Postorder</button>
+      </div>
     </div>
     <div id="tree-container"></div>
   </body>

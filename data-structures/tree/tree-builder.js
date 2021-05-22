@@ -11,6 +11,18 @@ const lighten = (node) => new Promise(resolve => {
   }, 500)
 })
 
+const unDarken = (node) => new Promise(resolve => {
+  setTimeout(() => {
+    node.domNodes.wrapper.classList.remove('darkened')
+    resolve()
+  }, 50)
+})
+
+const darken = (node) => {
+  node.domNodes.wrapper.classList.add('darkened')
+}
+
+
 const toggleHidden = (domNode) => {
   domNode.classList.toggle('hidden')
 }
@@ -48,7 +60,7 @@ const removeNode = (node) => {
   const { children, addButton, addSiblingButton } = node.parent.domNodes
   children.removeChild(node.domNodes.wrapper)
 
-  if (isBinary) {
+  if (isBinary && node.parent.children.size === 1) {
     toggleHidden(addButton)
     for (const child of node.parent.children) {
       child.domNodes && child.domNodes.addSiblingButton && toggleHidden(child.domNodes.addSiblingButton)
@@ -150,45 +162,83 @@ const render = () => {
 
 render()
 
-const traverseLeft = async function (node, traverse) {
-  if ([...node.children][0]) {
-    await traverse([...node.children][0])
-  }
-}
-const traverseRight = async function (node, traverse) {
-  if ([...node.children][1]) {
-    await traverse([...node.children][1])
-  }
-}
-const inOrderTraversal = async function (node) {
-  // left
-  await traverseLeft(node, inOrderTraversal)
-  // root
-  await lighten(node)
-  // right
-  await traverseRight(node, inOrderTraversal)
-}
-const preOrderTraversal = async function (node) {
-  // root
-  await lighten(node)
-  // left
-  await traverseLeft(node, preOrderTraversal)
-  // right
-  await traverseRight(node, preOrderTraversal)
-}
-const postOrderTraversal = async function (node) {
-  // left
-  await traverseLeft(node, postOrderTraversal)
-  // right
-  await traverseRight(node, postOrderTraversal)
-  // root
+const breadthFirstTraversal = async function (node) {
   await lighten(node)
 
+  for (const child of node.children) {
+    breadthFirstTraversal(child)
+  }
 }
+
+const traverseLeft = async function (node, traverse, ...traverseArgs) {
+  if ([...node.children][0]) {
+    await traverse([...node.children][0], ...traverseArgs)
+  }
+}
+const traverseRight = async function (node, traverse, ...traverseArgs) {
+  if ([...node.children][1]) {
+    await traverse([...node.children][1], ...traverseArgs)
+  }
+}
+
+const preOrderTraversal = async function (node, rootFn, traversalFn, cleanupFn) {
+  // root
+  rootFn && await rootFn(node)
+  // left
+  await traverseLeft(node, preOrderTraversal, rootFn, traversalFn, cleanupFn)
+  // right
+  await traverseRight(node, preOrderTraversal, rootFn, traversalFn, cleanupFn)
+
+  // traversed
+  traversalFn && await traversalFn(node)
+
+  if (!node.parent && cleanupFn) {
+    setTimeout(() => {
+      preOrderTraversal(node, null, cleanupFn)
+    }, 1000)
+  }
+}
+const inOrderTraversal = async function (node, rootFn, traversalFn, cleanupFn) {
+  // left
+  await traverseLeft(node, inOrderTraversal, rootFn, traversalFn, cleanupFn)
+  // root
+  rootFn && await rootFn(node)
+  // right
+  await traverseRight(node, inOrderTraversal, rootFn, traversalFn, cleanupFn)
+
+  // traversed
+  traversalFn && await traversalFn(node)
+
+  if (!node.parent && cleanupFn) {
+    setTimeout(() => {
+      preOrderTraversal(node, null, cleanupFn)
+    }, 1000)
+  }
+}
+const postOrderTraversal = async function (node, rootFn, traversalFn, cleanupFn) {
+  // left
+  await traverseLeft(node, postOrderTraversal, rootFn, traversalFn, cleanupFn)
+  // right
+  await traverseRight(node, postOrderTraversal, rootFn, traversalFn, cleanupFn)
+  // root
+  rootFn && await rootFn(node)
+
+  // traversed
+  traversalFn && await traversalFn(node)
+
+  if (!node.parent && cleanupFn) {
+    setTimeout(() => {
+      preOrderTraversal(node, null, cleanupFn)
+    }, 1000)
+  }
+}
+
+const breadthBtn = document.getElementById('breadth-btn')
+breadthBtn.onclick = breadthFirstTraversal.bind(null, tree.root)
 
 const inOrderBtn = document.getElementById('inorder-btn')
-inOrderBtn.onclick = inOrderTraversal.bind(null, tree.root)
+inOrderBtn.onclick = inOrderTraversal.bind(null, tree.root, lighten, darken, unDarken)
 const preOrderBtn = document.getElementById('preorder-btn')
-preOrderBtn.onclick = preOrderTraversal.bind(null, tree.root)
+preOrderBtn.onclick = preOrderTraversal.bind(null, tree.root, lighten, darken, unDarken)
 const postOrderBtn = document.getElementById('postorder-btn')
-postOrderBtn.onclick = postOrderTraversal.bind(null, tree.root)
+postOrderBtn.onclick = postOrderTraversal.bind(null, tree.root, lighten, darken, unDarken)
